@@ -1,7 +1,7 @@
 <template>
 <div>
 <GChart
-    type="ColumnChart"
+    type="BarChart"
     :data="chartData"
     :options="chartOptions"
   />
@@ -17,21 +17,43 @@ export default {
     data () {
     return {
       // Array will be automatically processed with visualization.arrayToDataTable function
-      chartData: null,
+      chartData: [],
+      defaultTop: 5,
       chartOptions: {
         chart: {
-          title: 'Company Performance',
-          subtitle: 'Sales, Expenses, and Profit: 2014-2017',
-        }
+          title: 'BASE students prefered jobs',
+          subtitle: 'Statistics based poll 2022',
+        },
+        backgroundColor: 'transparent',
+        legend: { position: 'none'},
+        chartArea: { left: 200, top: 0, height: 400, width: 500}
       }
     }
   },
   mounted() {
-    fetch('http://localhost:3000/api')
+    console.log(this.$route.params)
+    let query = {}
+    if (typeof this.$route.params.top === 'undefined') {
+      query.top = this.defaultTop
+    } else {
+      query.top = this.$route.params.top !== '' ? this.$route.params.top : this.defaultTop
+    }
+    
+    fetch('http://localhost:3000/api?' + new URLSearchParams(query))
     .then(response => response.json())
-    .then(response => {
-      this.chartData = response.chartData
-      console.log(response)
+    .then(chartData => {
+      console.log(chartData)
+      this.chartData.push(['Job Title', 'Jobs', {role: 'style'}, {role: 'annotation'}])
+      for (const jobTitle of chartData) {
+        this.chartData.push([
+          jobTitle.JobTitleCollection,
+          jobTitle.studentcount,
+          '#0000ff',
+          jobTitle.studentcount
+        ])
+      }
+
+      console.log(this.chartData)
     })
   }
 }

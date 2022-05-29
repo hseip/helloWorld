@@ -1,14 +1,18 @@
 const express = require('express');
+const BASE_db = require('../db');
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
-    res.json({ chartData: [
-        ['Year', 'Sales', 'Expenses', 'Profit'],
-        ['2014', 1000, 400, 1200],
-        ['2015', 1170, 460, 250],
-        ['2016', 660, 1120, 300],
-        ['2017', 1030, 540, 350]
-      ]});
+router.get('/', async (req, res, next) => {
+  console.log('incoming request: ', req.query)
+  try {
+    let results = await BASE_db.query1(req.query.top);
+    res.json(results);
+  } catch(e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+
+
 })
 
 module.exports = router;
