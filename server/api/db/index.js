@@ -13,7 +13,6 @@ let BASE_db = {};
 
 BASE_db.query1 = (top) => {
     return new Promise((resolve, reject) => {
-        console.log('db access');
         pool.query(`
                 Select A.JobTitleCollection, count(*) as studentcount from
         (Select StudentID, JobTitleCollection from StudentJobChoices
@@ -22,7 +21,6 @@ BASE_db.query1 = (top) => {
         group by A.JobTitleCollection 
         order by studentcount desc limit ?;
         `, [parseInt(top)],(err, results) => {
-            console.log(results)
             if (err) return reject(err);
             return resolve(results);
         })

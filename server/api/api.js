@@ -2,16 +2,33 @@ require('dotenv').config();
 
 const express = require('express');
 const apiRouter = require('./routes');
-const cors = require('cors');
+
 const app = express();
-app.use(cors({
-    origin: '*'
-}))
 
-console.log(process.env.MYSQL_USER);
-app.use(express.json());
-app.use('/api', apiRouter);
+if (process.env.NODE_ENV === 'PROD') {
 
-app.listen(3000, () => {
-    console.log('server running on port 3000');
-})
+    app.use(express.json());
+    app.use('/api', apiRouter);
+
+    app.use(express.static(__dirname + '/public/'));
+    app.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html'));
+
+
+    app.listen(80, () => {
+        console.log('server (PROD) running on port 80');
+    })
+    
+} else {
+    const cors = require('cors');
+    app.use(cors({
+        origin: '*'
+    }))
+    app.use(express.json());
+    app.use('/api', apiRouter);
+    
+    app.listen(3000, () => {
+        console.log('server (DEV) running on port 3000');
+    })
+}
+
+

@@ -31,7 +31,6 @@ export default {
     }
   },
   mounted() {
-    console.log(this.$route.params)
     let query = {}
     if (typeof this.$route.params.top === 'undefined') {
       query.top = this.defaultTop
@@ -42,7 +41,6 @@ export default {
     fetch('http://localhost:3000/api?' + new URLSearchParams(query))
     .then(response => response.json())
     .then(chartData => {
-      console.log(chartData)
       this.chartData.push(['Job Title', 'Jobs', {role: 'style'}, {role: 'annotation'}])
       for (const jobTitle of chartData) {
         this.chartData.push([
@@ -52,8 +50,6 @@ export default {
           jobTitle.studentcount
         ])
       }
-
-      console.log(this.chartData)
     })
   }
 }
