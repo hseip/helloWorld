@@ -19,7 +19,8 @@ fi
 #----------------------------------
 cd /home/ubuntu/BASE/client
 npm install
+echo "Quasar build step"
 quasar build
-
+echo "start Node server..."
 #start Node server for social media apis
 systemctl start nodejs
