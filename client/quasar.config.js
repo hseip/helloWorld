@@ -76,8 +76,11 @@ module.exports = configure(function (ctx) {
       chainWebpack (chain) {
         chain.plugin('eslint-webpack-plugin')
           .use(ESLintPlugin, [{ extensions: [ 'js', 'vue' ] }])
-      }
-      
+      },
+      env: ctx.dev ? 
+      { SERVER_URL: 'http://localhost:3000' } 
+      : 
+      { SERVER_URL: 'http://ec2-3-90-66-27.compute-1.amazonaws.com'}
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-devServer
