@@ -14,11 +14,12 @@ export default {
   components: {
     GChart
   },
-    data () {
+  props: ['inputTop'],
+  data () {
     return {
       // Array will be automatically processed with visualization.arrayToDataTable function
       chartData: [],
-      defaultTop: 5,
+      top: 5,
       chartOptions: {
         chart: {
           title: 'BASE students prefered jobs',
@@ -30,27 +31,39 @@ export default {
       }
     }
   },
-  mounted() {
-    let query = {}
-    if (typeof this.$route.params.top === 'undefined') {
-      query.top = this.defaultTop
-    } else {
-      query.top = this.$route.params.top !== '' ? this.$route.params.top : this.defaultTop
+  watch: {
+    inputTop () {
+      this.top = this.inputTop
+      this.fetchData()
     }
-    
-    fetch(process.env.SERVER_URL + '/api?' + new URLSearchParams(query))
-    .then(response => response.json())
-    .then(chartData => {
-      this.chartData.push(['Job Title', 'Jobs', {role: 'style'}, {role: 'annotation'}])
-      for (const jobTitle of chartData) {
-        this.chartData.push([
-          jobTitle.JobTitleCollection,
-          jobTitle.studentcount,
-          '#0000ff',
-          jobTitle.studentcount
-        ])
+  },
+  methods: {
+    fetchData () {
+      const query = { top: this.top }
+      this.$emit('setTop', query)
+      fetch(process.env.SERVER_URL + '/api?' + new URLSearchParams(query))
+      .then(response => response.json())
+      .then(chartData => {
+        this.chartData = []
+        this.chartData.push(['Job Title', 'Jobs', {role: 'style'}, {role: 'annotation'}])
+        for (const jobTitle of chartData) {
+          this.chartData.push([
+            jobTitle.JobTitleCollection,
+            jobTitle.studentcount,
+            '#0000ff',
+            jobTitle.studentcount
+          ])
+        }
+      })
+    }
+  },
+  mounted() {
+    if (typeof this.$route.params.top !== 'undefined') {
+      if (this.$route.params.top !== '') {
+       this.top = this.$route.params.top 
       }
-    })
+    } 
+    this.fetchData()
   }
 }
 </script>
